@@ -13,11 +13,15 @@ import static org.junit.Assert.*;
 public class VarastoTest {
 
     Varasto varasto;
+    Varasto varastoAlkusaldolla;
+    double alkusaldo = 50;
+    double tilavuus = 100;
     double vertailuTarkkuus = 0.0001;
 
     @Before
     public void setUp() {
         varasto = new Varasto(10);
+        varastoAlkusaldolla = new Varasto(tilavuus,alkusaldo);
     }
 
     @Test
@@ -64,5 +68,72 @@ public class VarastoTest {
         // varastossa pitäisi olla tilaa 10 - 8 + 2 eli 4
         assertEquals(4, varasto.paljonkoMahtuu(), vertailuTarkkuus);
     }
-
+    
+    @Test
+    public void konstuktoriLuoVarastonAlkusaldolla() {
+        assertEquals(alkusaldo, varastoAlkusaldolla.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void uudellaVarastollaAlkusaldollaOnOikeaTilavuus() {
+        assertEquals(tilavuus,varastoAlkusaldolla.getTilavuus(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void konstruktiLuoKayttokelvottomanVarastonJosTilavuusNegatiivinen() {
+        Varasto kelvotonVarasto = new Varasto(-10);
+        assertEquals(0,kelvotonVarasto.getTilavuus(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void konstruktiLuoKayttokelvottomanVarastonJosTilavuusNegatiivinen2() {
+        Varasto kelvotonVarasto = new Varasto(-10,10);
+        assertEquals(0,kelvotonVarasto.getTilavuus(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void tilavuudenYlittavaAlkusaldoHylataan() {
+        Varasto testivarasto = new Varasto(10,20);
+        assertEquals(10,testivarasto.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void konstruktiAsettaaNegatiivisenAlkusaldonNollaksi() {
+        Varasto testivarasto = new Varasto(28, -12.1);
+        assertEquals(0,testivarasto.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void negatiivinenLisaysEiMuutaVarastosaldoa() {
+        varastoAlkusaldolla.lisaaVarastoon(-10);
+        assertEquals(alkusaldo,varastoAlkusaldolla.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void saldonYlittaessaTilavuudenYlimaaraHukataan() {
+        varastoAlkusaldolla.lisaaVarastoon(varastoAlkusaldolla.getTilavuus()*1.1);
+        assertEquals(varastoAlkusaldolla.getTilavuus(),varastoAlkusaldolla.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void negatiivinenOttoEiMuutaVarastosaldoa() {
+        varastoAlkusaldolla.otaVarastosta(-50.2);
+        assertEquals(alkusaldo,varastoAlkusaldolla.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void ottoYliSaldonTyhjentaaVaraston() {
+        varastoAlkusaldolla.otaVarastosta(alkusaldo*1.5);
+        assertEquals(0,varastoAlkusaldolla.getSaldo(),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void ottoYliSaldonPalauttaaSaldon() {
+        assertEquals(alkusaldo,varastoAlkusaldolla.otaVarastosta(alkusaldo*1.1),vertailuTarkkuus);
+    }
+    
+    @Test
+    public void varastonMerkkijonoesitysOnOikein() {
+        assertEquals("saldo = " + alkusaldo + ", vielä tilaa " + (tilavuus-alkusaldo), varastoAlkusaldolla.toString());
+    }
 }
