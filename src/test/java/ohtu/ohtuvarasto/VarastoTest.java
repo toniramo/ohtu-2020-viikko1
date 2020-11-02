@@ -20,8 +20,8 @@ public class VarastoTest {
 
     @Before
     public void setUp() {
-        varasto = new Varasto(10+10);
-        varastoAlkusaldolla = new Varasto(tilavuus+10,alkusaldo+10);
+        varasto = new Varasto(10);
+        varastoAlkusaldolla = new Varasto(tilavuus,alkusaldo);
     }
 
     @Test
